@@ -62,8 +62,8 @@ graph TB
     
         ```groovy title="build.gradle"
         dependencies {
-            implementation 'ai.koog:koog-agents:0.7.0'
-            implementation 'ai.koog:agents-features-memory:0.7.0'
+            implementation 'ai.koog:koog-agents:1.2.0'
+            implementation 'ai.koog:agents-features-memory:1.2.0'
         }
         ```
     
@@ -78,7 +78,7 @@ graph TB
         <dependency>
             <groupId>ai.koog</groupId>
             <artifactId>agents-features-memory-jvm</artifactId>
-            <version>0.7.0</version>
+            <version>1.2.0</version>
         </dependency>
         ```
 
