@@ -1,3 +1,19 @@
+# 1.4.0
+> Published 26 November 2026
+
+## Improvements
+
+- **Gemini cached and thinking tokens in Langfuse**: `GoogleLLMClient` now also carries `thoughtsTokenCount` in `ResponseMetaInfo.metadata` (next to `cachedContentTokenCount`), in both the streaming and non-streaming paths. `LangfuseSpanAdapter` turns these counts into `langfuse.observation.usage_details` (`input`, `input_cached_tokens`, `output`, `output_reasoning`) on inference spans, so Langfuse no longer bills cached prompt tokens at the full input rate and accounts for thinking tokens. Other providers keep the previous behavior (#2303)
+
+## Bug Fixes
+
+- **Every message part in Langfuse spans**: `LangfuseSpanAdapter` now writes the whole input history to `gen_ai.prompt` and the response to `gen_ai.completion` as single JSON arrays in the OpenAI message shape, so Langfuse shows answer text, readable reasoning, tool calls, and every tool result. Previously, signature-only thinking blocks (all Claude 5 models) produced empty output, text next to reasoning or a tool call was dropped, and only the first of several parallel tool results was shown (#2298)
+- **Multi-line SSE chunks in Bedrock AgentCore Runtime**: `respondTextStream` and `respondInvocationText` (with `Accept: text/event-stream`) now split each chunk on line breaks and write one `data:` field per line, so spec-compliant SSE clients no longer drop text after an embedded newline. Newline-free chunks keep the exact same wire format (#2289, #2292)
+
+## Breaking Changes
+
+- **Exposed upgraded to 1.6.0**: `agents-features-sql` and `agents-features-chat-memory-sql` now depend on JetBrains Exposed 1.6.0 (from 0.61.0), picking up upstream fixes including a security advisory (CVE-2026-108474). Their public API now exposes Exposed 1.x types: consumers that pass a `Database` to a provider, implement `ExposedPersistenceFilter`, or subclass `CheckpointsTable` / `ChatHistoryTable` must upgrade to Exposed 1.6.0 and change imports from `org.jetbrains.exposed.sql.*` to `org.jetbrains.exposed.v1.*` (#2321)
+
 # 1.3.0
 > Published 23 September 2026
 
