@@ -1,3 +1,19 @@
+# 1.4.0
+> Published 26 November 2026
+
+## Improvements
+
+- **Gemini cached and thinking tokens in Langfuse**: The Google client now also carries `thoughtsTokenCount` into `ResponseMetaInfo.metadata` (next to `cachedContentTokenCount`) in both `execute` and `executeStreaming`, and `LangfuseSpanAdapter` reports both counts through `langfuse.observation.usage_details` (`input`, `input_cached_tokens`, `output`, `output_reasoning`), so Langfuse no longer bills cached prompt tokens at the full input rate or ignores thinking tokens. Other providers keep the previous behavior (#2303)
+
+## Bug Fixes
+
+- **Every message part in Langfuse spans**: `LangfuseSpanAdapter` now writes the whole input history and the response as single `gen_ai.prompt` / `gen_ai.completion` JSON arrays in the OpenAI message shape, so Langfuse shows answer text, readable reasoning, tool calls, and every tool result instead of dropping parts (e.g. text next to a tool call, parallel tool results, or Claude's signature-only thinking blocks). Writing one attribute per message list also keeps long runs under the OTel SDK's default 128-attributes-per-span limit (#2298)
+- **Multi-line SSE chunks in Bedrock AgentCore Runtime**: `respondTextStream` and `respondInvocationText` (with `Accept: text/event-stream`) now split each chunk into one `data:` field per line, as the SSE spec requires, so spec-compliant clients no longer drop text after an embedded newline ([#2289](https://github.com/JetBrains/koog/issues/2289), #2292)
+
+## Breaking Changes
+
+- **Exposed upgraded to 1.6.0**: `agents-features-sql` and `agents-features-chat-memory-sql` now depend on JetBrains Exposed 1.6.0 (from 0.61.0), which also picks up the fix for security advisory CVE-2026-108474. These modules expose Exposed types in their public API, so consumers that pass a `Database` to a provider, implement `ExposedPersistenceFilter`, or subclass `CheckpointsTable` / `ChatHistoryTable` must upgrade to Exposed 1.x and change imports from `org.jetbrains.exposed.sql.*` to `org.jetbrains.exposed.v1.*` (#2321)
+
 # 1.3.0
 > Published 23 September 2026
 
